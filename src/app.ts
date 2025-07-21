@@ -1,15 +1,20 @@
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import routes from "./routes";
+import authRoutes from "./routes/auth.route";
+import { errorHandler } from "./middlewares/error.middleware";
 import cookieParser from "cookie-parser";
 import swaggerUi from "swagger-ui-express";
 import YAML from "yamljs";
+import { redisClient } from "./utils/redisClient";
+import { extractClientMeta } from "./middlewares/extractClientMeta.middleware";
 const cors = require("cors");
 
 const swaggerDocument = YAML.load("./src/swagger.yaml");
 dotenv.config();
 
-const app = express();
+export const app = express();
 app.use(cors());
 app.use(
   cors({
@@ -20,13 +25,19 @@ app.use(
 
 app.use(cookieParser());
 app.use(express.json());
+app.use(extractClientMeta);
+app.use("/api", routes);
+app.use("/auth", authRoutes);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 7000;
 
 const startServer = async () => {
   try {
     // Connect Redis
+    await redisClient.connect();
+    console.log("🚀 ~ Redis connected:", redisClient.isReady);
 
     // Connect MongoDB
     await mongoose.connect(process.env.MONGO_URL || "", {});
