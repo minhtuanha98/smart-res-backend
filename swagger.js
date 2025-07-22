@@ -30,7 +30,7 @@ const options = {
       },
     ],
   },
-  apis: ["./routes/*.js"], // Đường dẫn đến các file chứa route của bạn
+  apis: ["./routes/*.js"],
 };
 
 const specs = swaggerJsdoc(options);
