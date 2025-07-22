@@ -30,6 +30,7 @@ app.use("/uploads", express.static("uploads"));
 app.use("/api", routes);
 app.use("/auth", authRoutes);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use("/uploads", express.static("uploads"));
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 7000;

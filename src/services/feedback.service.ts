@@ -2,7 +2,7 @@ import { MESSAGES } from "../constants/messages";
 import { STATUS_CODE } from "../constants/statusCode";
 import { AppError } from "../errors/AppError";
 import feedbackRepository from "../repositories/feedback.repository";
-import { FeedbackInput } from "../types/feedBackType";
+import { FeedbackInput, FeedbackQuery } from "../types/feedBackType";
 import logger from "../utils/logger";
 
 const { USERID_NOT_FOUND } = MESSAGES.USER;
@@ -34,6 +34,24 @@ const createFeedback = async (data: FeedbackInput) => {
   }
 };
 
+const getFeedbacks = async (data: FeedbackQuery) => {
+  const { page, limit, status, userId, role } = data;
+  let filter: any = {};
+  if (role === "resident") {
+    filter.userId = userId;
+  }
+  if (status) {
+    filter.status = status;
+  }
+  const feedbacksResult = await feedbackRepository.getFeedbacks({
+    ...filter,
+    page,
+    limit,
+  });
+  return feedbacksResult;
+};
+
 export default {
   createFeedback,
+  getFeedbacks,
 };

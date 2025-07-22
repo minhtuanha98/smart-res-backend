@@ -6,8 +6,6 @@ const { BAD_REQUEST } = STATUS_CODE;
 
 export const validateYupSchema = (schema: AnySchema) => {
   return (req: Request, res: Response, next: NextFunction): void => {
-    console.log("req.body:", req.body);
-    console.log("req.file:", req.file);
     const schemaMeta = schema.meta();
     if (schemaMeta && schemaMeta.hasFile) {
       schema

@@ -1,6 +1,6 @@
-# Smart Restaurant Backend
+# Smart Resident Backend
 
-A comprehensive backend API for smart restaurant management system built with Node.js, TypeScript, Express, MongoDB, and Redis.
+A comprehensive backend API for Smart Resident management system built with Node.js, TypeScript, Express, MongoDB, and Redis.
 
 ## Features
 

@@ -34,7 +34,42 @@ const createFeedback = async (feedbackData: FeedbackInput) => {
   }
 };
 
+const getFeedbacks = async (query: any) => {
+  try {
+    const { userId, status, page, limit } = query;
+    const where: any = {};
+    if (userId) where.userId = userId;
+    if (status) where.status = status;
+
+    const options: any = {
+      where,
+      orderBy: { createdAt: "desc" },
+      include: { user: true },
+    };
+
+    if (page && limit) {
+      options.skip = (Number(page) - 1) * Number(limit);
+      options.take = Number(limit);
+    }
+
+    const result = await prisma.feedback.findMany(options);
+
+    // Lọc feedback chỉ lấy những cái có user tồn tại
+    const filteredResult = result.filter((fb) => fb.userId !== null);
+    const total = filteredResult.length;
+
+    return { data: filteredResult, total };
+  } catch (error) {
+    logger.error(
+      `[DATABASE ERROR] Failed to create feedback for userId: ${query.userId}`,
+      error
+    );
+    throw new AppError(DATABASE_ERROR, INTERNAL_SERVER_ERROR, "010");
+  }
+};
+
 export default {
   findByUserId,
   createFeedback,
+  getFeedbacks,
 };
