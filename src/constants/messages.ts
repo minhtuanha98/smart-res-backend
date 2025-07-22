@@ -1,15 +1,16 @@
 export const MESSAGES = {
   AUTH: {
     INVALID_CREDENTIALS: "XXXXX",
-    UNAUTHORIZED: "XXXXX",
-    FORBIDDEN: "XXXXX",
+    UNAUTHORIZED: "Unauthorized",
+    FORBIDDEN: "403",
     NOT_FOUND: "404",
     INTERNAL_SERVER_ERROR: "Internal server error",
     DATABASE_ERROR: "Database error",
   },
   SESSION_TOKEN: {
-    INVALID: "Invalid or expired refresh token",
+    INVALID: "Invalid or expired token",
     TOKEN_REQUIRED: "Token is required",
+    TOKEN_MISS: "Missing token",
   },
   USER: {
     VALIDATE: {
@@ -37,9 +38,22 @@ export const MESSAGES = {
     LOGIN_USER_FAIL: "Login user fail",
     ERROR: "Data is not valid",
     NOT_FOUND: "User not found",
+    USERID_NOT_FOUND: "User id not found",
     VERIFY_MAIL: "Email verified successfully",
     VERIFIED_MAIL: "Email has been verified",
-    USER_FULL: "100 playerId already, can't create new user!",
     INVALID_PASSWORD: "Invalid password",
+  },
+  FEEDBACK: {
+    TITLE_REQUIRE: "Title is required",
+    CONTENT_REQUIRE: "Content is required",
+    IMAGE_REQUIRE: "Image is required",
+    INVALID_IMAGE: "Invalid image format",
+    CREATE_FEEDBACK_FAIL: "Create feedback fail",
+    NOT_FOUND: "Feedback not found",
+    DELETE_FEEDBACK_FAIL: "Delete feedback fail",
+    UPDATE_FEEDBACK_FAIL: "Update feedback fail",
+    FEEDBACK_CREATED: "Feedback created successfully",
+    FEEDBACK_DELETED: "Feedback deleted successfully",
+    FEEDBACK_UPDATED: "Feedback updated successfully",
   },
 };

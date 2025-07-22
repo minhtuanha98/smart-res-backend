@@ -14,10 +14,12 @@ const { UNAUTHORIZED, FORBIDDEN, INTERNAL_SERVER_ERROR } = STATUS_CODE;
 
 const generateVerifyToken = (
   userId: string,
-  expiresIn: SignOptions["expiresIn"]
+  expiresIn: SignOptions["expiresIn"],
+  role?: string
 ) => {
   const options: SignOptions = { expiresIn };
-  return jwt.sign({ userId }, SECRET, options);
+  console.log("SECRET generateVerifyToken:", SECRET);
+  return jwt.sign({ userId, role }, SECRET, options);
 };
 
 const generateRefreshToken = (
