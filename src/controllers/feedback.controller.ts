@@ -15,7 +15,26 @@ export const feedbackController = async (req: Request, res: Response) => {
   });
 
   res.status(201).json({
-    message: "Feedback created successfully",
     feedback,
+  });
+};
+
+export const getFeedbacksController = async (req: Request, res: Response) => {
+  const { page, limit, status } = req.query;
+  const { userId, role } = req.user || {};
+
+  const feedbacksResult = await feedBackService.getFeedbacks({
+    page: Number(page),
+    limit: Number(limit),
+    status: typeof status === "string" ? status : "",
+    userId: userId ?? "",
+    role: role ?? "",
+  });
+
+  res.json({
+    data: feedbacksResult.data,
+    total: feedbacksResult.total,
+    page: Number(page),
+    limit: Number(limit),
   });
 };

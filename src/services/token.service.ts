@@ -18,7 +18,6 @@ const generateVerifyToken = (
   role?: string
 ) => {
   const options: SignOptions = { expiresIn };
-  console.log("SECRET generateVerifyToken:", SECRET);
   return jwt.sign({ userId, role }, SECRET, options);
 };
 
