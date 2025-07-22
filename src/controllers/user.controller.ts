@@ -33,7 +33,7 @@ export const loginController = async (req: Request, res: Response) => {
     sameSite: "strict",
     maxAge: req.body.rememberMe ? 30 * 24 * 60 * 60 * 1000 : 60 * 60 * 1000,
   });
-
+  // Respond with user information
   res.status(200).json({
     user: {
       _id: user._id,

@@ -38,7 +38,8 @@ const loginUSer = async (data: UserLoginType, userDevice: UserDeviceType) => {
 
     const accessToken = tokenService.generateVerifyToken(
       user.id.toString(),
-      expiresIn
+      expiresIn,
+      user.role.toString()
     );
     const refreshToken = tokenService.generateRefreshToken(
       user.id.toString(),

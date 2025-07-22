@@ -1,6 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+dotenv.config();
 import routes from "./routes";
 import authRoutes from "./routes/auth.route";
 import { errorHandler } from "./middlewares/error.middleware";
@@ -12,7 +13,6 @@ import { extractClientMeta } from "./middlewares/extractClientMeta.middleware";
 const cors = require("cors");
 
 const swaggerDocument = YAML.load("./src/swagger.yaml");
-dotenv.config();
 
 export const app = express();
 app.use(cors());
@@ -26,6 +26,7 @@ app.use(
 app.use(cookieParser());
 app.use(express.json());
 app.use(extractClientMeta);
+app.use("/uploads", express.static("uploads"));
 app.use("/api", routes);
 app.use("/auth", authRoutes);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
