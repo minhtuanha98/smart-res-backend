@@ -4,6 +4,7 @@ import { JwtPayload } from "../types/JwtDecodedType";
 import jwt from "jsonwebtoken";
 import { MESSAGES } from "../constants/messages";
 import logger from "../utils/logger";
+import { redisClient } from "../utils/redisClient";
 
 const SECRET = process.env.JWT_SECRET || "default_secret_key";
 
@@ -11,12 +12,25 @@ const { INVALID } = MESSAGES.SESSION_TOKEN;
 const { FORBIDDEN, UNAUTHORIZED } = MESSAGES.AUTH;
 
 export const protect = (roles: string | string[]) => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    const token = req.cookies.access_token;
+  return async (req: Request, res: Response, next: NextFunction) => {
+    let token = req.cookies.access_token;
+
+    if (
+      !token &&
+      req.headers.authorization &&
+      req.headers.authorization.startsWith("Bearer ")
+    ) {
+      token = req.headers.authorization.substring(7); // Bỏ "Bearer "
+    }
 
     if (!token) return res.status(401).json({ message: UNAUTHORIZED });
 
     try {
+      const isBlacklisted = await redisClient.get(`blacklist:${token}`);
+      if (isBlacklisted) {
+        return res.status(401).json({ message: "Token has been invalidated" });
+      }
+
       const decoded = jwt.verify(token, SECRET) as JwtPayload;
       const allowedRoles = Array.isArray(roles) ? roles : [roles];
 
