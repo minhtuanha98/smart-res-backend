@@ -15,10 +15,9 @@ const cors = require("cors");
 const swaggerDocument = YAML.load("./src/swagger.yaml");
 
 export const app = express();
-app.use(cors());
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "http://localhost:3000",
     credentials: true,
   })
 );

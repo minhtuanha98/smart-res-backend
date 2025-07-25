@@ -8,6 +8,7 @@ import { feedbackSchema } from "../schemas/feedback.schema";
 import {
   feedbackController,
   getFeedbacksController,
+  updateFeedBackController,
 } from "../controllers/feedback.controller";
 import { logoutController } from "../controllers/logout.controller";
 
@@ -26,6 +27,14 @@ router.get(
   "/list/feedbacks",
   protect(["admin", "resident"]),
   getFeedbacksController
+);
+
+router.put(
+  "/feedbacks/:feedbackId",
+  protect(["admin", "resident"]),
+  upload.single("image"),
+  validateYupSchema(feedbackSchema),
+  updateFeedBackController
 );
 
 router.post("/logout", logoutController);

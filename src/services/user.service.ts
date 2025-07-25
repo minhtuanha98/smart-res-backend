@@ -69,7 +69,6 @@ const loginUSer = async (data: UserLoginType, userDevice: UserDeviceType) => {
       refreshToken,
     };
   } catch (error) {
-    console.error("Login user error:", error);
     if (error instanceof AppError) {
       throw error;
     }

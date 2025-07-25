@@ -18,12 +18,13 @@ model User {
 }
 
 model Feedback {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  title     String
-  content   String
-  userId    String   @db.ObjectId 
-  user      User     @relation(fields: [userId], references: [id])
-  imageUrl  String? 
-  status    String   @default("pending")
-  createdAt DateTime @default(now())
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  content     String
+  apartNumber String   @default("Unknown")
+  userId      String   @db.ObjectId 
+  user        User     @relation(fields: [userId], references: [id])
+  imageUrl    String? 
+  status      String   @default("pending")
+  createdAt   DateTime @default(now())
 }

@@ -1,13 +1,15 @@
 import * as yup from "yup";
 import { MESSAGES } from "../constants/messages";
 
-const { TITLE_REQUIRE, CONTENT_REQUIRE, INVALID_IMAGE } = MESSAGES.FEEDBACK;
+const { TITLE_REQUIRE, APART_NUMBER_REQUIRE, CONTENT_REQUIRE, INVALID_IMAGE } =
+  MESSAGES.FEEDBACK;
 
 export const feedbackSchema = yup
   .object({
     body: yup.object({
       title: yup.string().required(TITLE_REQUIRE),
       content: yup.string().required(CONTENT_REQUIRE),
+      apartNumber: yup.string().required(APART_NUMBER_REQUIRE),
     }),
     file: yup
       .object({

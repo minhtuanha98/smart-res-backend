@@ -2,16 +2,23 @@ import { MESSAGES } from "../constants/messages";
 import { STATUS_CODE } from "../constants/statusCode";
 import { AppError } from "../errors/AppError";
 import feedbackRepository from "../repositories/feedback.repository";
-import { FeedbackInput, FeedbackQuery } from "../types/feedBackType";
+import {
+  Feedback,
+  FeedbackInput,
+  FeedbackQuery,
+  OnlyStatus,
+} from "../types/feedBackType";
 import logger from "../utils/logger";
 
 const { USERID_NOT_FOUND } = MESSAGES.USER;
-const { CREATE_FEEDBACK_FAIL } = MESSAGES.FEEDBACK;
-const { NOT_FOUND } = STATUS_CODE;
+const { FORBIDDEN: PERMISSION } = MESSAGES.AUTH;
+const { CREATE_FEEDBACK_FAIL, FEEDBACK_NOT_FOUND, STATUS_PERMISSION } =
+  MESSAGES.FEEDBACK;
+const { NOT_FOUND, FORBIDDEN } = STATUS_CODE;
 
 const createFeedback = async (data: FeedbackInput) => {
   try {
-    const { userId, title, content, imageUrl } = data;
+    const { userId, title, apartNumber, content, imageUrl } = data;
 
     const user = await feedbackRepository.findByUserId(userId);
 
@@ -21,6 +28,7 @@ const createFeedback = async (data: FeedbackInput) => {
     const feedback = await feedbackRepository.createFeedback({
       userId,
       title,
+      apartNumber,
       content,
       imageUrl,
     });
@@ -48,10 +56,64 @@ const getFeedbacks = async (data: FeedbackQuery) => {
     page,
     limit,
   });
+
   return feedbacksResult;
+};
+
+const updateFeedback = async (data: any) => {
+  try {
+    const { feedbackId, title, content, imageUrl, status, userId, role } = data;
+
+    const user = await feedbackRepository.findByUserId(userId);
+
+    if (!user) {
+      throw new AppError(USERID_NOT_FOUND, NOT_FOUND, "002");
+    }
+
+    const feedBack = await feedbackRepository.findByFeedBackId(feedbackId);
+
+    if (!feedBack) {
+      throw new AppError(FEEDBACK_NOT_FOUND, NOT_FOUND, "002");
+    }
+
+    if (role === "resident") {
+      if (feedBack.userId !== userId) {
+        throw new AppError(PERMISSION, FORBIDDEN, "003");
+      }
+      if (status) {
+        throw new AppError(STATUS_PERMISSION, FORBIDDEN, "003");
+      }
+      // Resident chỉ được update title, content, imageUrl
+      const dataToUpdate: Partial<FeedbackInput> = {};
+      if (title) dataToUpdate.title = title;
+      if (content) dataToUpdate.content = content;
+      if (imageUrl) dataToUpdate.imageUrl = imageUrl;
+      if (Object.keys(dataToUpdate).length === 0) return feedBack;
+      const updatedFeedback = await feedbackRepository.updateFeedback(
+        dataToUpdate,
+        feedBack.id
+      );
+      return updatedFeedback;
+    }
+
+    // Admin chỉ được update status
+    if (role === "admin") {
+      if (!status) return feedBack;
+      if (!["pending", "resolved", "rejected"].includes(status)) {
+        throw new AppError(FEEDBACK_NOT_FOUND, FORBIDDEN, "004");
+      }
+      const dataToUpdate: OnlyStatus = { status };
+      const updatedFeedback = await feedbackRepository.updateFeedback(
+        dataToUpdate,
+        feedBack.id
+      );
+      return updatedFeedback;
+    }
+  } catch (error) {}
 };
 
 export default {
   createFeedback,
   getFeedbacks,
+  updateFeedback,
 };

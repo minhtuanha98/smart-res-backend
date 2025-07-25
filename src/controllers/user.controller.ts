@@ -22,14 +22,14 @@ export const loginController = async (req: Request, res: Response) => {
   // Set access_token to cookie
   res.cookie("access_token", user.accessToken, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    // secure: true,
     maxAge: req.body.rememberMe ? 30 * 24 * 60 * 60 * 1000 : 60 * 60 * 1000,
   });
 
   // Set refresh_token to cookie
   res.cookie("refresh_token", user.refreshToken, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    // secure: true,
     sameSite: "strict",
     maxAge: req.body.rememberMe ? 30 * 24 * 60 * 60 * 1000 : 60 * 60 * 1000,
   });
