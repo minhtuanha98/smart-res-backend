@@ -8,7 +8,7 @@ describe("userRepository.findByUsername", () => {
     // Tạo user test
     await prisma.user.create({
       data: {
-        username: "testuser",
+        username: "admin",
         email: "testuser@example.com",
         password: "hashedpassword",
         role: "user",
@@ -18,8 +18,7 @@ describe("userRepository.findByUsername", () => {
   });
 
   afterAll(async () => {
-    // Xóa user test
-    await prisma.user.deleteMany({ where: { username: "testuser" } });
+    await prisma.user.deleteMany({ where: { username: "admin" } });
     await prisma.$disconnect();
   });
 

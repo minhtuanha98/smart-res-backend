@@ -38,6 +38,16 @@ const verifyRefreshToken = (token: string): JwtPayload => {
   return jwt.verify(token, SECRET) as JwtPayload;
 };
 
+/**
+ * Handles refresh token logic:
+ * - Validates the provided refresh token.
+ * - Retrieves and parses the session from Redis.
+ * - Verifies the refresh token's signature.
+ * - Validates client metadata (deviceId, userAgent, ip) for security.
+ * - Rotates the refresh token and updates the session in Redis.
+ * - Generates a new access token.
+ * Returns the new access and refresh tokens.
+ */
 const handleRefreshToken = async (
   refreshToken: string,
   deviceId: string,
@@ -54,7 +64,6 @@ const handleRefreshToken = async (
 
     // Verify token signature
     const decoded = verifyRefreshToken(refreshToken);
-    console.log("🚀 ~ handleRefreshToken ~ decoded:", decoded);
 
     // Validate client metadata for security
     validateClientMetadata(session, { deviceId, userAgent, ip });
@@ -95,6 +104,10 @@ const validateRefreshToken = (refreshToken: string) => {
   }
 };
 
+/**
+ * Retrieves the session data associated with the given refresh token from Redis.
+ * Throws an AppError if the session does not exist (token expired or reused).
+ */
 const getSessionFromRedis = async (refreshToken: string): Promise<string> => {
   const sessionData = await redisClient.get(refreshToken);
 
@@ -111,6 +124,10 @@ const getSessionFromRedis = async (refreshToken: string): Promise<string> => {
   return sessionData;
 };
 
+/**
+ * Parses the session data JSON string retrieved from Redis.
+ * Throws an AppError if the session data is invalid or cannot be parsed.
+ */
 const parseSessionData = (sessionData: string) => {
   try {
     return JSON.parse(sessionData) as {
@@ -127,6 +144,11 @@ const parseSessionData = (sessionData: string) => {
   }
 };
 
+/**
+ * Validates that the client metadata (deviceId, userAgent, ip) from the current request
+ * matches the metadata stored in the session. Throws an AppError if there is a mismatch,
+ * indicating possible token misuse or session hijacking.
+ */
 const validateClientMetadata = (
   session: { deviceId: string; userAgent: string; ip: string; id: string },
   client: { deviceId: string; userAgent: string; ip: string }
@@ -158,6 +180,13 @@ const validateClientMetadata = (
   }
 };
 
+/**
+ * Rotates the refresh token:
+ * - Generates a new refresh token for the user.
+ * - Creates a new session object with updated client metadata.
+ * - Deletes the old refresh token from Redis and stores the new one atomically.
+ * - Returns the new refresh token.
+ */
 const rotateRefreshToken = async (
   oldToken: string,
   userId: string,

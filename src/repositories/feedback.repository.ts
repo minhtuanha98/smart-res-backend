@@ -10,6 +10,7 @@ const prisma = new PrismaClient();
 const { INTERNAL_SERVER_ERROR } = STATUS_CODE;
 const { DATABASE_ERROR } = MESSAGES.AUTH;
 
+// Find a user by their userId
 const findByUserId = async (userId: string) => {
   try {
     return await prisma.user.findUnique({ where: { id: userId } });
@@ -22,6 +23,7 @@ const findByUserId = async (userId: string) => {
   }
 };
 
+// Find a feedback by its feedbackId
 const findByFeedBackId = async (feedbackId: string) => {
   try {
     const data = await prisma.feedback.findUnique({
@@ -38,6 +40,7 @@ const findByFeedBackId = async (feedbackId: string) => {
   }
 };
 
+// Create a new feedback entry
 const createFeedback = async (feedbackData: FeedbackInput) => {
   try {
     return await prisma.feedback.create({ data: feedbackData });
@@ -50,6 +53,7 @@ const createFeedback = async (feedbackData: FeedbackInput) => {
   }
 };
 
+// Update an existing feedback entry by its feedbackId
 const updateFeedback = async (
   data: Partial<FeedbackInput> | OnlyStatus,
   feedbackId: string
@@ -68,6 +72,7 @@ const updateFeedback = async (
   }
 };
 
+// Retrieve feedbacks with optional filtering by userId and status, and support for pagination
 const getFeedbacks = async (query: any) => {
   try {
     const { userId, status, page, limit } = query;
@@ -81,15 +86,19 @@ const getFeedbacks = async (query: any) => {
       include: { user: false },
     };
 
+    // Apply pagination if page and limit are provided
     if (page && limit) {
       options.skip = (Number(page) - 1) * Number(limit);
       options.take = Number(limit);
     }
 
+    // Get total count of feedbacks matching the filter
     const total = await prisma.feedback.count({ where });
 
+    // Retrieve feedbacks based on the options
     const result = await prisma.feedback.findMany(options);
 
+    // Filter out feedbacks with null userId
     const filteredResult = result.filter((fb) => fb.userId !== null);
 
     return { data: filteredResult, total };
@@ -102,6 +111,7 @@ const getFeedbacks = async (query: any) => {
   }
 };
 
+// Delete a feedback entry by its feedbackId
 const deleteFeedback = async (feedbackId: string) => {
   if (!feedbackId) {
     logger.error(

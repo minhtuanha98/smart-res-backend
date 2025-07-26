@@ -1,6 +1,5 @@
 export const MESSAGES = {
   AUTH: {
-    INVALID_CREDENTIALS: "XXXXX",
     UNAUTHORIZED: "Unauthorized",
     FORBIDDEN: "Permission denied",
     NOT_FOUND: "NOT_FOUND",
@@ -12,6 +11,7 @@ export const MESSAGES = {
     TOKEN_REQUIRED: "Token is required",
     TOKEN_MISS: "Missing token",
     TOKEN_SUCCESS: "Token refreshed successfully",
+    TOKEN_INVALID: "Token has been invalidated",
   },
   USER: {
     VALIDATE: {
@@ -37,6 +37,7 @@ export const MESSAGES = {
     EXIST_USER: "User with this email already exists",
     CREATE_USER: "Create user fail",
     LOGIN_USER_FAIL: "Login user fail",
+    LOGOUT_SUCCESS: "Logout successfully",
     ERROR: "Data is not valid",
     NOT_FOUND: "User not found",
     USERID_NOT_FOUND: "User id not found",
