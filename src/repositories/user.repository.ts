@@ -20,6 +20,44 @@ const findByUsername = async (username: string) => {
     throw new AppError(DATABASE_ERROR, INTERNAL_SERVER_ERROR, "010");
   }
 };
+
+const getAllUsers = async (query: { page: number; limit: number }) => {
+  const { page, limit } = query;
+  try {
+    const where: any = {};
+
+    const options: any = {
+      where,
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        apartNumber: true,
+        phone: true,
+        createdAt: true,
+      },
+    };
+
+    if (page && limit) {
+      options.skip = (Number(page) - 1) * Number(limit);
+      options.take = Number(limit);
+    }
+
+    const totalUsers = await prisma.user.count();
+    const users = await prisma.user.findMany(options);
+
+    return { data: users, totalUsers };
+  } catch (error) {
+    logger.error("[DATABASE ERROR] Failed to get all users", error);
+    throw new AppError(
+      MESSAGES.USER.USER_LIST_FAIL,
+      INTERNAL_SERVER_ERROR,
+      "010"
+    );
+  }
+};
 export default {
   findByUsername,
+  getAllUsers,
 };

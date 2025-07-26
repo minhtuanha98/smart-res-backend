@@ -3,11 +3,21 @@ import { redisClient } from "../utils/redisClient";
 import logger from "../utils/logger";
 
 export const logoutController = async (req: Request, res: Response) => {
-  res.clearCookie("access_token");
-  res.clearCookie("refresh_token");
-
   const refreshToken = req.cookies.refresh_token;
   const accessToken = req.cookies.access_token;
+
+  // Clear cookies with same options as when they were set
+  res.clearCookie("access_token", {
+    httpOnly: true,
+    sameSite: "lax",
+    path: "/",
+  });
+
+  res.clearCookie("refresh_token", {
+    httpOnly: true,
+    sameSite: "lax",
+    path: "/",
+  });
 
   try {
     if (refreshToken) {

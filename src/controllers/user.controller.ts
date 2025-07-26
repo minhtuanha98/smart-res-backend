@@ -22,15 +22,16 @@ export const loginController = async (req: Request, res: Response) => {
   // Set access_token to cookie
   res.cookie("access_token", user.accessToken, {
     httpOnly: true,
-    // secure: true,
-    maxAge: req.body.rememberMe ? 30 * 24 * 60 * 60 * 1000 : 60 * 60 * 1000,
+    sameSite: "lax",
+    path: "/",
+    maxAge: 1 * 60 * 1000, // 1 minutes
   });
 
   // Set refresh_token to cookie
   res.cookie("refresh_token", user.refreshToken, {
     httpOnly: true,
-    // secure: true,
-    sameSite: "strict",
+    sameSite: "lax",
+    path: "/",
     maxAge: req.body.rememberMe ? 30 * 24 * 60 * 60 * 1000 : 60 * 60 * 1000,
   });
   // Respond with user information
@@ -41,5 +42,21 @@ export const loginController = async (req: Request, res: Response) => {
       email: user.email,
       role: user.role,
     },
+  });
+};
+
+export const getAllUserController = async (req: Request, res: Response) => {
+  const { page, limit } = req.query;
+
+  const usersResult = await userService.getAllUsers({
+    page: page ? Number(page) : 1,
+    limit: limit ? Number(limit) : 10,
+  });
+
+  res.json({
+    users: usersResult.data,
+    total: usersResult.totalUsers,
+    page: page ? Number(page) : 1,
+    limit: limit ? Number(limit) : 10,
   });
 };

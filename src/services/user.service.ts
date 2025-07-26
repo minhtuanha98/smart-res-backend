@@ -7,7 +7,7 @@ import { redisClient } from "../utils/redisClient";
 import tokenService from "./token.service";
 import userRepository from "../repositories/user.repository";
 
-const { INVALID_PASSWORD, LOGIN_USER_FAIL } = MESSAGES.USER;
+const { INVALID_PASSWORD, LOGIN_USER_FAIL, USER_LIST_FAIL } = MESSAGES.USER;
 const { UNAUTHORIZED } = STATUS_CODE;
 
 /**
@@ -17,7 +17,7 @@ const { UNAUTHORIZED } = STATUS_CODE;
  * @throws AppError if the username or password is invalid, or if a system error occurs.
  */
 const loginUSer = async (data: UserLoginType, userDevice: UserDeviceType) => {
-  const { username, password, rememberMe } = data;
+  const { username, password } = data;
   const { deviceId, userAgent, ip } = userDevice;
 
   try {
@@ -34,16 +34,15 @@ const loginUSer = async (data: UserLoginType, userDevice: UserDeviceType) => {
       throw new AppError(INVALID_PASSWORD, UNAUTHORIZED, "002");
     }
 
-    const expiresIn = rememberMe ? "30d" : "1h";
-
     const accessToken = tokenService.generateVerifyToken(
       user.id.toString(),
-      expiresIn,
+      "1h",
       user.role.toString()
     );
     const refreshToken = tokenService.generateRefreshToken(
       user.id.toString(),
-      "1d"
+      "1d",
+      user.role.toString()
     );
 
     //save refresh token to redis
@@ -76,4 +75,15 @@ const loginUSer = async (data: UserLoginType, userDevice: UserDeviceType) => {
   }
 };
 
-export default { loginUSer };
+const getAllUsers = async (query: { page: number; limit: number }) => {
+  try {
+    return await userRepository.getAllUsers(query);
+  } catch (error) {
+    if (error instanceof AppError) {
+      throw error;
+    }
+    throw new AppError(USER_LIST_FAIL, 500, "003");
+  }
+};
+
+export default { loginUSer, getAllUsers };

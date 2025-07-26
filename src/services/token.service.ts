@@ -23,10 +23,11 @@ const generateVerifyToken = (
 
 const generateRefreshToken = (
   userId: string,
-  expiresIn: SignOptions["expiresIn"]
+  expiresIn: SignOptions["expiresIn"],
+  role?: string
 ) => {
   const options: SignOptions = { expiresIn };
-  return jwt.sign({ userId }, SECRET, options);
+  return jwt.sign({ userId, role }, SECRET, options);
 };
 
 const verifyAccessToken = (token: string): JwtPayload => {
@@ -53,6 +54,7 @@ const handleRefreshToken = async (
 
     // Verify token signature
     const decoded = verifyRefreshToken(refreshToken);
+    console.log("🚀 ~ handleRefreshToken ~ decoded:", decoded);
 
     // Validate client metadata for security
     validateClientMetadata(session, { deviceId, userAgent, ip });
@@ -61,10 +63,18 @@ const handleRefreshToken = async (
     const newRefreshToken = await rotateRefreshToken(
       refreshToken,
       decoded.userId,
+      decoded.role || "",
       { deviceId, userAgent, ip }
     );
 
-    return newRefreshToken;
+    // Generate new access token
+    const newAccessToken = generateVerifyToken(
+      decoded.userId,
+      "1h",
+      decoded.role
+    );
+
+    return { newAccessToken, newRefreshToken };
   } catch (error: any) {
     logger.error(`[REFRESH TOKEN ERROR] ${error?.message || "Unknown error"}`, {
       error,
@@ -151,9 +161,10 @@ const validateClientMetadata = (
 const rotateRefreshToken = async (
   oldToken: string,
   userId: string,
+  role: string,
   clientMeta: { deviceId: string; userAgent: string; ip: string }
 ): Promise<string> => {
-  const newRefreshToken = generateRefreshToken(userId, "7d");
+  const newRefreshToken = generateRefreshToken(userId, "7d", role);
 
   const newSession = {
     userId,
@@ -175,5 +186,6 @@ export default {
   generateVerifyToken,
   generateRefreshToken,
   verifyAccessToken,
+  verifyRefreshToken,
   handleRefreshToken,
 };

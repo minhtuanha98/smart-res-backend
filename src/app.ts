@@ -27,7 +27,7 @@ app.use(express.json());
 app.use(extractClientMeta);
 app.use("/uploads", express.static("uploads"));
 app.use("/api", routes);
-app.use("/auth", authRoutes);
+app.use("/api/auth", authRoutes);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use("/uploads", express.static("uploads"));
 app.use(errorHandler);
