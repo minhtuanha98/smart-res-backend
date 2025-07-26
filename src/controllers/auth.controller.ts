@@ -21,22 +21,35 @@ export const refreshTokenController = async (req: Request, res: Response) => {
     const { deviceId, userAgent, ip } = req.clientMeta!;
     const refreshToken = req.cookies.refresh_token;
 
-    const newRefreshToken = await tokenService.handleRefreshToken(
-      refreshToken,
-      deviceId,
-      userAgent,
-      ip
-    );
+    const { newAccessToken, newRefreshToken } =
+      await tokenService.handleRefreshToken(
+        refreshToken,
+        deviceId,
+        userAgent,
+        ip
+      );
 
-    res.cookie("refresh_token", newRefreshToken, {
+    // Set access_token cookie
+    res.cookie("access_token", newAccessToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      path: "/refresh-token",
-      maxAge: 60 * 60 * 1000,
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 1000, // 1 hour
     });
 
-    res.json({ newRefreshToken });
+    // Set new refresh_token cookie
+    res.cookie("refresh_token", newRefreshToken, {
+      httpOnly: true,
+      sameSite: "lax",
+      path: "/",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
+
+    res.status(200).json({
+      message: MESSAGES.SESSION_TOKEN.TOKEN_SUCCESS,
+      accessToken: newAccessToken,
+      refreshToken: newRefreshToken,
+    });
   } catch (error) {
     logger.error(`ERROR SERVER`, {
       error,

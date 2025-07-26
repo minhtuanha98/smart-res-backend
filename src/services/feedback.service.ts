@@ -109,11 +109,50 @@ const updateFeedback = async (data: any) => {
       );
       return updatedFeedback;
     }
-  } catch (error) {}
+  } catch (error) {
+    logger.error(
+      `[SERVICE ERROR] Failed to create feedback for userId: ${error}`
+    );
+    throw new AppError(CREATE_FEEDBACK_FAIL, 500, "003");
+  }
+};
+
+const deleteFeedback = async (data: any) => {
+  try {
+    const { feedbackId, userId, role } = data;
+
+    const user = await feedbackRepository.findByUserId(userId);
+
+    if (!user) {
+      throw new AppError(USERID_NOT_FOUND, NOT_FOUND, "002");
+    }
+
+    const feedBack = await feedbackRepository.findByFeedBackId(feedbackId);
+
+    if (!feedBack) {
+      throw new AppError(FEEDBACK_NOT_FOUND, NOT_FOUND, "002");
+    }
+
+    if (role === "resident") {
+      if (feedBack.userId !== userId) {
+        throw new AppError(PERMISSION, FORBIDDEN, "003");
+      }
+    } else if (role !== "admin") {
+      throw new AppError(PERMISSION, FORBIDDEN, "003");
+    }
+
+    await feedbackRepository.deleteFeedback(feedbackId);
+  } catch (error) {
+    logger.error(
+      `[SERVICE ERROR] Failed to delete feedback for userId: ${error}`
+    );
+    throw new AppError(CREATE_FEEDBACK_FAIL, 500, "003");
+  }
 };
 
 export default {
   createFeedback,
   getFeedbacks,
   updateFeedback,
+  deleteFeedback,
 };

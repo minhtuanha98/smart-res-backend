@@ -102,10 +102,31 @@ const getFeedbacks = async (query: any) => {
   }
 };
 
+const deleteFeedback = async (feedbackId: string) => {
+  if (!feedbackId) {
+    logger.error(
+      "[DATABASE ERROR] FeedbackId is required but was undefined or null"
+    );
+    throw new AppError("FeedbackId is required", INTERNAL_SERVER_ERROR, "011");
+  }
+
+  try {
+    await prisma.feedback.delete({
+      where: { id: feedbackId },
+    });
+  } catch (error) {
+    logger.error(
+      `[DATABASE ERROR] Failed to delete feedback by feedbackId: ${feedbackId}`,
+      error
+    );
+    throw new AppError(DATABASE_ERROR, INTERNAL_SERVER_ERROR, "010");
+  }
+};
 export default {
   findByUserId,
   findByFeedBackId,
   createFeedback,
   updateFeedback,
   getFeedbacks,
+  deleteFeedback,
 };

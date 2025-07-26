@@ -6,7 +6,6 @@ export const feedbackController = async (req: Request, res: Response) => {
   const userId = req.user?.userId;
 
   const image = req.file?.filename;
-  console.log("🚀 ~ feedbackController ~ image:", image);
 
   await feedBackService.createFeedback({
     title,
@@ -47,7 +46,6 @@ export const updateFeedBackController = async (req: Request, res: Response) => {
   const { title, content, status } = req.body;
   const image = req.file?.filename;
   const { userId, role } = req.user || {};
-  console.log("🚀 ~ updateFeedBackController ~ imageUrl:", image);
 
   const updatedFeedback = await feedBackService.updateFeedback({
     feedbackId,
@@ -62,5 +60,21 @@ export const updateFeedBackController = async (req: Request, res: Response) => {
   res.status(200).json({
     message: "Feedback updated successfully",
     feedback: updatedFeedback,
+  });
+};
+
+export const deleteFeedbackController = async (req: Request, res: Response) => {
+  console.log("11111111111111");
+  const { feedbackId } = req.params;
+  const { userId, role } = req.user || {};
+
+  await feedBackService.deleteFeedback({
+    feedbackId,
+    userId: userId ?? "",
+    role: role ?? "",
+  });
+
+  res.status(200).json({
+    message: "Feedback deleted successfully",
   });
 };

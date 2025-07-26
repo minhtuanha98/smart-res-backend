@@ -1,11 +1,15 @@
 import { Router } from "express";
 import { loginSchema } from "../schemas/login.schema";
 import { validateYupSchema } from "../middlewares/validate.middleware";
-import { loginController } from "../controllers/user.controller";
+import {
+  getAllUserController,
+  loginController,
+} from "../controllers/user.controller";
 import { protect } from "../middlewares/auth.middleware";
 import { upload } from "../utils/multer";
 import { feedbackSchema } from "../schemas/feedback.schema";
 import {
+  deleteFeedbackController,
   feedbackController,
   getFeedbacksController,
   updateFeedBackController,
@@ -29,12 +33,20 @@ router.get(
   getFeedbacksController
 );
 
+router.get("/list-user", protect("admin"), getAllUserController);
+
 router.put(
-  "/feedbacks/:feedbackId",
+  "/feedback/:feedbackId",
   protect(["admin", "resident"]),
   upload.single("image"),
-  validateYupSchema(feedbackSchema),
+  // validateYupSchema(feedbackSchema),
   updateFeedBackController
+);
+
+router.delete(
+  "/feedback/:feedbackId",
+  protect("admin"),
+  deleteFeedbackController
 );
 
 router.post("/logout", logoutController);

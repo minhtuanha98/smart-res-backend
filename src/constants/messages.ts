@@ -11,6 +11,7 @@ export const MESSAGES = {
     INVALID: "Invalid or expired token",
     TOKEN_REQUIRED: "Token is required",
     TOKEN_MISS: "Missing token",
+    TOKEN_SUCCESS: "Token refreshed successfully",
   },
   USER: {
     VALIDATE: {
@@ -42,6 +43,7 @@ export const MESSAGES = {
     VERIFY_MAIL: "Email verified successfully",
     VERIFIED_MAIL: "Email has been verified",
     INVALID_PASSWORD: "Invalid password",
+    USER_LIST_FAIL: "Get user list fail",
   },
   FEEDBACK: {
     TITLE_REQUIRE: "Title is required",
