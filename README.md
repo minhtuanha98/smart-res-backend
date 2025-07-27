@@ -81,6 +81,22 @@ Quick description of main folders:
    npm install
    ```
 
+## Seeding Sample Data
+
+To populate the database with sample data, run the following command:
+
+```bash
+npm run db:seed
+```
+
+Or directly with Node.js:
+
+```bash
+node src/seed.js
+```
+
+This will insert initial users and feedbacks as defined in `src/seed.js` into your database. Make sure your database service is running before seeding.
+
 ## Development
 
 ```bash
