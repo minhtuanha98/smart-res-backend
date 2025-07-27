@@ -24,7 +24,7 @@ export const loginController = async (req: Request, res: Response) => {
     httpOnly: true,
     sameSite: "lax",
     path: "/",
-    maxAge: 1 * 60 * 1000, // 1 minutes
+    maxAge: 60 * 60 * 1000, // 1 hour
   });
 
   // Set refresh_token to cookie
@@ -32,7 +32,7 @@ export const loginController = async (req: Request, res: Response) => {
     httpOnly: true,
     sameSite: "lax",
     path: "/",
-    maxAge: req.body.rememberMe ? 30 * 24 * 60 * 60 * 1000 : 60 * 60 * 1000,
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   });
   // Respond with user information
   res.status(200).json({
