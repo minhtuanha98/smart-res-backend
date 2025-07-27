@@ -28,29 +28,49 @@ A comprehensive backend API for Smart Resident management system built with Node
 - **Testing**: Jest, Supertest
 - **Development**: ts-node-dev, nodemon
 
-## Project Structure
-
 src/
 templates/ # Email templates
 docs/ # Documentation
-├── **tests**/ # Test files (controller, service, repository)
-├── config/ # Configuration files
-├── constants/ # Constant values (messages, status codes)
-├── controllers/ # Request handlers
-├── errors/ # Custom error classes
-├── lib/ # (Optional) Library code
-├── middlewares/ # Custom middleware (auth, error, validation, extract meta)
-├── repositories/ # Data access layer
-├── routes/ # API route definitions
-├── schemas/ # Yup validation schemas
-├── services/ # Business logic
-├── types/ # TypeScript type definitions
-├── utils/ # Utility functions (logger, redis, multer)
-├── app.ts # Express app setup
-├── server.ts # Server bootstrap
-├── swagger.yaml # OpenAPI documentation
-prisma/
-└── schema.prisma # Prisma schema
+
+## Project Structure
+
+```
+smart-res-backend/
+├── src/
+│   ├── app.ts              # Express app setup
+│   ├── server.ts           # Server bootstrap
+│   ├── swagger.yaml        # OpenAPI documentation
+│   ├── controllers/        # Request handlers (User, Auth, Feedback...)
+│   ├── services/           # Business logic (User, Feedback...)
+│   ├── repositories/       # Data access (via Prisma ORM)
+│   ├── middlewares/        # Middleware (auth, error, validation, extract meta)
+│   ├── schemas/            # Yup validation schemas
+│   ├── types/              # TypeScript type definitions
+│   ├── utils/              # Utilities (logger, redis, multer...)
+│   ├── constants/          # Constants (messages, status codes...)
+│   ├── errors/             # Custom error classes
+│   ├── routes/             # API route definitions
+│   ├── lib/                # Additional libraries (if any)
+│   └── __tests__/          # Unit & integration tests
+├── prisma/
+│   └── schema.prisma       # Prisma schema (DB models)
+├── templates/              # Email templates (if used)
+├── docs/                   # Additional documentation
+├── Dockerfile              # Docker build file
+├── docker-compose.yml      # Docker Compose config
+├── package.json            # Node.js dependencies & scripts
+├── tsconfig.json           # TypeScript config
+└── README.md               # Project guide
+```
+
+Quick description of main folders:
+
+- `src/`: All backend source code
+- `prisma/`: Prisma schema and database definitions
+- `templates/`: Email templates (if any)
+- `docs/`: Additional documentation
+- `__tests__/`: Unit and integration tests
+- `Dockerfile`, `docker-compose.yml`: Docker deployment
 
 ## Installation
 

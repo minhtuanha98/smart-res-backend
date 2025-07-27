@@ -7,16 +7,18 @@ async function main() {
     const password = await bcrypt.hash("12345", 10);
     await prisma.user.create({
       data: {
-        username: "admin",
-        email: "admin@example.com",
+        username: "resident3",
+        email: "resident34@example.com",
         password,
-        role: "admin",
+        apartNumber: "A-101",
+        phone: "1234567890",
+        role: "resident",
         createdAt: new Date(),
         feedbacks: {
           create: [
             {
               title: "Welcome",
-              content: "Welcome to the admin dashboard!",
+              content: "Welcome to the resident dashboard!",
               createdAt: new Date(),
             },
           ],
