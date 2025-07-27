@@ -11,6 +11,8 @@ describe("userRepository.findByUsername", () => {
         username: "admin",
         email: "testuser@example.com",
         password: "hashedpassword",
+        apartNumber: "A-101",
+        phone: "1234567890",
         role: "user",
         createdAt: new Date(),
       },
