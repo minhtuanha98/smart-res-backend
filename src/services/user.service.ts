@@ -75,6 +75,12 @@ const loginUSer = async (data: UserLoginType, userDevice: UserDeviceType) => {
   }
 };
 
+/**
+ * Retrieves a paginated list of all users.
+ * @param query - Pagination parameters (page and limit).
+ * @returns A list of users based on the provided pagination.
+ * @throws AppError if retrieving the user list fails.
+ */
 const getAllUsers = async (query: { page: number; limit: number }) => {
   try {
     return await userRepository.getAllUsers(query);

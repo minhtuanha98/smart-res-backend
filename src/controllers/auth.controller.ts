@@ -1,8 +1,6 @@
 import { Request, Response } from "express";
-import { STATUS_CODE } from "../constants/statusCode";
 import { MESSAGES } from "../constants/messages";
 import tokenService from "../services/token.service";
-import logger from "../utils/logger";
 
 /**
  * Handles the refresh token process for user authentication.
@@ -17,46 +15,36 @@ import logger from "../utils/logger";
  * @returns A JSON response containing the new refresh token on success, or a forbidden error message on failure.
  */
 export const refreshTokenController = async (req: Request, res: Response) => {
-  try {
-    const { deviceId, userAgent, ip } = req.clientMeta!;
-    const refreshToken = req.cookies.refresh_token;
+  const { deviceId, userAgent, ip } = req.clientMeta!;
+  const refreshToken = req.cookies.refresh_token;
 
-    const { newAccessToken, newRefreshToken } =
-      await tokenService.handleRefreshToken(
-        refreshToken,
-        deviceId,
-        userAgent,
-        ip
-      );
+  const { newAccessToken, newRefreshToken } =
+    await tokenService.handleRefreshToken(
+      refreshToken,
+      deviceId,
+      userAgent,
+      ip
+    );
 
-    // Set access_token cookie
-    res.cookie("access_token", newAccessToken, {
-      httpOnly: true,
-      sameSite: "lax",
-      path: "/",
-      maxAge: 60 * 60 * 1000, // 1 hour
-    });
+  // Set access_token cookie
+  res.cookie("access_token", newAccessToken, {
+    httpOnly: true,
+    sameSite: "lax",
+    path: "/",
+    maxAge: 60 * 60 * 1000, // 1 hour
+  });
 
-    // Set new refresh_token cookie
-    res.cookie("refresh_token", newRefreshToken, {
-      httpOnly: true,
-      sameSite: "lax",
-      path: "/",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    });
+  // Set new refresh_token cookie
+  res.cookie("refresh_token", newRefreshToken, {
+    httpOnly: true,
+    sameSite: "lax",
+    path: "/",
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+  });
 
-    res.status(200).json({
-      message: MESSAGES.SESSION_TOKEN.TOKEN_SUCCESS,
-      accessToken: newAccessToken,
-      refreshToken: newRefreshToken,
-    });
-  } catch (error) {
-    logger.error(`ERROR SERVER`, {
-      error,
-    });
-
-    res.status(STATUS_CODE.FORBIDDEN).json({
-      message: MESSAGES.SESSION_TOKEN.INVALID,
-    });
-  }
+  res.status(200).json({
+    message: MESSAGES.SESSION_TOKEN.TOKEN_SUCCESS,
+    accessToken: newAccessToken,
+    refreshToken: newRefreshToken,
+  });
 };

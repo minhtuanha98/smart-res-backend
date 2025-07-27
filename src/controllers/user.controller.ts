@@ -45,6 +45,23 @@ export const loginController = async (req: Request, res: Response) => {
   });
 };
 
+/**
+ * Handles the request to retrieve a paginated list of users.
+ *
+ * @param req - Express request object, expects optional `page` and `limit` query parameters for pagination.
+ * @param res - Express response object used to send the JSON response.
+ * @returns A JSON response containing the list of users, total user count, current page, and limit per page.
+ *
+ * @example
+ * // GET /users?page=2&limit=20
+ * // Response:
+ * // {
+ * //   users: [...],
+ * //   total: 100,
+ * //   page: 2,
+ * //   limit: 20
+ * // }
+ */
 export const getAllUserController = async (req: Request, res: Response) => {
   const { page, limit } = req.query;
 

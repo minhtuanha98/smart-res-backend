@@ -8,7 +8,7 @@ import { redisClient } from "../utils/redisClient";
 
 const SECRET = process.env.JWT_SECRET || "default_secret_key";
 
-const { INVALID } = MESSAGES.SESSION_TOKEN;
+const { INVALID, TOKEN_INVALID } = MESSAGES.SESSION_TOKEN;
 const { FORBIDDEN, UNAUTHORIZED } = MESSAGES.AUTH;
 
 export const protect = (roles: string | string[]) => {
@@ -28,7 +28,7 @@ export const protect = (roles: string | string[]) => {
     try {
       const isBlacklisted = await redisClient.get(`blacklist:${token}`);
       if (isBlacklisted) {
-        return res.status(401).json({ message: "Token has been invalidated" });
+        return res.status(401).json({ message: TOKEN_INVALID });
       }
 
       const decoded = jwt.verify(token, SECRET) as JwtPayload;
