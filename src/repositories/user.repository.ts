@@ -3,6 +3,7 @@ import { AppError } from "../errors/AppError";
 import { MESSAGES } from "../constants/messages";
 import { STATUS_CODE } from "../constants/statusCode";
 import logger from "../utils/logger";
+import { UserType } from "../types/userType";
 
 const prisma = new PrismaClient();
 
@@ -69,7 +70,77 @@ const getAllUsers = async (query: { page: number; limit: number }) => {
     );
   }
 };
+
+const findUserByEmailOrUsernameOrApartNumber = async (
+  email: string,
+  username: string,
+  apartNumber: string
+) => {
+  try {
+    return await prisma.user.findFirst({
+      where: {
+        OR: [{ email }, { username }, { apartNumber }],
+      },
+    });
+  } catch (error) {
+    logger.error(
+      "[DATABASE ERROR] Failed to find user by email, username or apart number",
+      error
+    );
+    throw new AppError(DATABASE_ERROR, INTERNAL_SERVER_ERROR, "010");
+  }
+};
+
+const createUser = async (user: UserType) => {
+  const {
+    fullname,
+    username,
+    email,
+    password,
+    apartNumber,
+    phone,
+    role,
+    dob,
+    gender,
+    isVerified = false,
+    permissions,
+    isActive = false,
+  } = user;
+
+  try {
+    if (!user.role) {
+      throw new AppError("User role is required", INTERNAL_SERVER_ERROR, "010");
+    }
+
+    return await prisma.user.create({
+      data: {
+        fullname,
+        username,
+        email,
+        password,
+        apartNumber,
+        phone,
+        role: role!, // Non-null assertion since you already check for !user.role above
+        dob,
+        gender: gender as UserType["gender"],
+        isVerified,
+        permissions: Array.isArray(permissions)
+          ? permissions
+          : permissions
+          ? [permissions]
+          : [],
+        isActive,
+      },
+    });
+  } catch (error) {
+    logger.error("[DATABASE ERROR] Failed to create user", error);
+    throw new AppError(DATABASE_ERROR, INTERNAL_SERVER_ERROR, "010");
+  }
+};
+
 export default {
   findByUsername,
   getAllUsers,
+  findUserByEmailOrUsernameOrApartNumber,
+  createUser,
 };

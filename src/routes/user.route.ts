@@ -4,6 +4,7 @@ import { validateYupSchema } from "../middlewares/validate.middleware";
 import {
   getAllUserController,
   loginController,
+  registerUserController,
 } from "../controllers/user.controller";
 import { protect } from "../middlewares/auth.middleware";
 import { upload } from "../utils/multer";
@@ -15,10 +16,18 @@ import {
   updateFeedBackController,
 } from "../controllers/feedback.controller";
 import { logoutController } from "../controllers/logout.controller";
+import { registerSchema } from "../schemas/register.schema";
 
 const router = Router();
 
 router.post("/login", validateYupSchema(loginSchema), loginController);
+
+router.post(
+  "/register",
+  validateYupSchema(registerSchema),
+  registerUserController
+);
+
 router.post(
   "/feedback",
   protect("resident"),

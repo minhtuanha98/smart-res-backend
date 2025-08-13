@@ -1,5 +1,8 @@
 import { Request, Response } from "express";
 import userService from "../services/user.service";
+import { MESSAGES } from "../constants/messages";
+
+const { CREATE_USER_SUCCESS } = MESSAGES.USER;
 
 /**
  * Logs in a user with the provided credentials.
@@ -75,5 +78,13 @@ export const getAllUserController = async (req: Request, res: Response) => {
     total: usersResult.totalUsers,
     page: page ? Number(page) : 1,
     limit: limit ? Number(limit) : 10,
+  });
+};
+
+export const registerUserController = async (req: Request, res: Response) => {
+  await userService.registerUser(req.body);
+
+  res.status(201).json({
+    message: CREATE_USER_SUCCESS,
   });
 };
