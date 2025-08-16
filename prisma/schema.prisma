@@ -8,14 +8,30 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  admin
+  resident
+}
+
+enum Gender {
+  male
+  female
+}
+
 model User {
   id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  fullname    String
   username    String
   email       String     @unique
   password    String
   apartNumber String     @default("Unknown")
   phone       String?
-  role        String
+  role        Role
+  dob         DateTime
+  gender      Gender
+  isVerified  Boolean
+  permissions String[]
+  isActive    Boolean
   createdAt   DateTime   @default(now())
   feedbacks   Feedback[]
 }
