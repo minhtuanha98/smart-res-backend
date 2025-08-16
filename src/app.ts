@@ -1,5 +1,4 @@
 import express from "express";
-import mongoose from "mongoose";
 import dotenv from "dotenv";
 dotenv.config();
 import routes from "./routes";
@@ -9,6 +8,7 @@ import cookieParser from "cookie-parser";
 import swaggerUi from "swagger-ui-express";
 import YAML from "yamljs";
 import { extractClientMeta } from "./middlewares/extractClientMeta.middleware";
+import setupCronJobs from "./config/cron";
 const cors = require("cors");
 
 const swaggerDocument = YAML.load("./src/swagger.yaml");
@@ -30,3 +30,5 @@ app.use("/api/auth", authRoutes);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use("/uploads", express.static("uploads"));
 app.use(errorHandler);
+
+setupCronJobs();
